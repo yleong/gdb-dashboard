@@ -995,7 +995,7 @@ location, if available. Optionally list the frame arguments and locals too."""
             if self.show_arguments:
                 def prefix(line):
                     return Stack.format_line('arg', line)
-                frame_args = decorator.frame_args()
+                frame_args = sorted(decorator.frame_args(), key=lambda fa: fa.sym.value(frame).address)
                 args_lines = Stack.fetch_frame_info(frame, frame_args)
                 if args_lines:
                     if self.compact:
@@ -1009,7 +1009,7 @@ location, if available. Optionally list the frame arguments and locals too."""
             if self.show_locals:
                 def prefix(line):
                     return Stack.format_line('loc', line)
-                frame_locals = decorator.frame_locals()
+                frame_locals = sorted(decorator.frame_locals(), key=lambda fl: fl.sym.value(frame).address)
                 locals_lines = Stack.fetch_frame_info(frame, frame_locals)
                 if locals_lines:
                     if self.compact:
@@ -1165,11 +1165,16 @@ class Memory(Dashboard.Module):
             address = format_address(start + i)
             hexa = (' '.join('{:02x}'.format(ord(byte)) for byte in region))
             text = (''.join(Memory.format_byte(byte) for byte in region))
-            out.append('{} {}{} {}{}'.format(ansi(address, R.style_low),
-                                             hexa,
+            #CUSTOM
+            out.append('{} {}{}{}{}{} {}{}'.format(ansi(address, R.style_low),
+                                             ansi(hexa[0:12], R.style_high),
+                                             hexa[12:24],
+                                             ansi(hexa[24:36], R.style_high),
+                                             hexa[36:],
                                              ansi(pad * ' --', R.style_low),
                                              ansi(text, R.style_high),
                                              ansi(pad * '.', R.style_low)))
+            #ENDCUSTOM
         return out
 
     def label(self):
@@ -1426,3 +1431,4 @@ python Dashboard.start()
 # Local Variables:
 # mode: python
 # End:
+
