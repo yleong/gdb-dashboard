@@ -1,0 +1,13 @@
+dashboard -layout registers source assembly expressions memory stack
+define ws
+dashboard memory watch $esp ($ebp-$esp)
+end
+define uws
+dashboard memory unwatch $esp
+end
+dashboard -style style_low '34'
+dashboard -style style_selected_2 '32'
+dashboard -style style_selected_1 '31'
+dashboard -style prompt_not_running '\\[\\e[1;32m\\]>>>\\[\\e[0m\\]'
+dashboard stack -style locals True
+dashboard stack -style compact True
