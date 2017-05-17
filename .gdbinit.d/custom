@@ -1,9 +1,9 @@
 dashboard -layout registers source assembly expressions memory stack
 define ws
-dashboard memory watch $esp ($ebp-$esp)
+p $watchstack("add")
 end
 define uws
-dashboard memory unwatch $esp
+p $watchstack("remove")
 end
 dashboard -style style_low '34'
 dashboard -style style_selected_2 '32'
