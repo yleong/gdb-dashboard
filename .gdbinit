@@ -1183,8 +1183,9 @@ class Memory(Dashboard.Module):
     def lines(self, term_width, style_changed):
         out = []
         inferior = gdb.selected_inferior()
-        for address, length in sorted(self.table.items()):
+        for address, (length, note)in sorted(self.table.items()):
             try:
+                out.append(note)
                 memory = inferior.read_memory(address, length)
                 out.extend(self.format_memory(address, memory))
             except gdb.error:
@@ -1200,12 +1201,13 @@ class Memory(Dashboard.Module):
     def watch(self, arg):
         if arg:
             address, _, length = arg.partition(' ')
+            note = '{} = {}'.format(arg, Memory.parse_as_address(length))
             address = Memory.parse_as_address(address)
             if length:
                 length = Memory.parse_as_address(length)
             else:
                 length = self.row_length
-            self.table[address] = length
+            self.table[address] = (length, note)
         else:
             raise Exception('Specify an address')
 
